@@ -1,13 +1,16 @@
 import discord
 from discord.ext import commands
 import asyncio
+import json
 
 from bot.punchy import Punchy
 
 async def run_punchy() -> None:
     bot = Punchy(intents = discord.Intents.default())
 
+    with open("key.json", 'r') as f:
+        key = json.load(f)["key"]
     async with bot:
-        await bot.start("MTA1NTM5Mzg3MTk1MTA0MDU2Mg.GqaHXC.fxxxfFSR4qnYEEZLAYmQTWGlqrXciMn_ch6Djs")
+        await bot.start(key)
 
 asyncio.run(run_punchy())
