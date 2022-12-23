@@ -19,12 +19,21 @@ class Duel(commands.Cog):
             return
         
         player1, player2 = interaction.user, user
-        await interaction.response.send_message("Insert duel here", view=ActionView(player1, player2))
+
+        player1_name = player1.nick if player1.nick else player1.name
+        player2_name = player2.nick if player2.nick else player2.name
+
+        embed = discord.Embed(colour = discord.Colour.greyple())
+        embed.set_footer(text = f"{player1_name}, {player2_name} please pick your combination")
+        embed.add_field(name = player1_name, value = "___", inline = False)
+        embed.add_field(name = player2_name, value = "___", inline = False)
+        embed.set_author(name=f"{player1_name} 🆚 {player2_name}")
+        await interaction.response.send_message(embed = embed, view=ActionView(player1, player2, embed))
         return
 
     @duel.error
     async def on_duel_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        await interaction.response.send_message(str(error))
+        await interaction.channel.send(str(error))
 
 async def setup(bot):
     await bot.add_cog(Duel(bot))
