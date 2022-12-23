@@ -1,7 +1,8 @@
-import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
+
+from bot.util.action_view import ActionView
 
 class Duel(commands.Cog):
     def __init__(self, bot) -> None:
@@ -16,10 +17,9 @@ class Duel(commands.Cog):
         if user.bot:
             await interaction.response.send_message("You can't challenge a bot! You'll definetly lose!", ephemeral=True)
             return
-            
         
         player1, player2 = interaction.user, user
-        await interaction.response.send_message("Insert duel here")
+        await interaction.response.send_message("Insert duel here", view=ActionView(player1, player2))
         return
 
     @duel.error
