@@ -1,8 +1,10 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import asyncio
 
 from bot.util.action_view import ActionView
+from bot.duel_helpers.duel_manager import DuelManager
 
 class Duel(commands.Cog):
     def __init__(self, bot) -> None:
@@ -20,15 +22,9 @@ class Duel(commands.Cog):
         
         player1, player2 = interaction.user, user
 
-        player1_name = player1.nick if player1.nick else player1.name
-        player2_name = player2.nick if player2.nick else player2.name
-
-        embed = discord.Embed(colour = discord.Colour.greyple())
-        embed.set_footer(text = f"{player1_name}, {player2_name} please pick your combination")
-        embed.add_field(name = player1_name, value = "___", inline = False)
-        embed.add_field(name = player2_name, value = "___", inline = False)
-        embed.set_author(name=f"{player1_name} 🆚 {player2_name}")
-        await interaction.response.send_message(embed = embed, view=ActionView(player1, player2, embed))
+        manager = DuelManager(player1, player2, interaction)
+        
+        await manager.run()
         return
 
     @duel.error
