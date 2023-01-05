@@ -1,24 +1,30 @@
 import discord
 from discord.ui import View
+from duel_helpers.duel_moves.basic_moves import *
+
+DEFAULT_MOVES = [LightAttack(), HeavyAttack(), Block()]
 
 class ActionView(View):
-    def __init__(self, player1, player2, embed : discord.Embed, timeout = 60) -> None:
+    def __init__(self, 
+        player1, player2, embed : discord.Embed, 
+        player_info_dict : dict,
+        player1_moves = DEFAULT_MOVES, 
+        player2_moves = DEFAULT_MOVES, 
+        timeout = 60
+        ) -> None:
         super().__init__(timeout=timeout)
         self.player1 = player1
         self.player2 = player2
         self.embed = embed
         
-        self.users_moves = dict()
+        self.player_info_dict = player_info_dict
         
-        self.new_round()
-
-    def new_round(self):
-        self.users_moves = {
-            self.player1 : [],
-            self.player2 : []
+        self.users_move_objs = {
+            self.player1 : player1_moves,
+            self.player2 : player2_moves
         }
 
-        self.player_to_id = {
+        self.users_to_id = {
             self.player1 : 0,
             self.player2 : 1
         }
@@ -39,21 +45,21 @@ class ActionView(View):
     @discord.ui.button(label='Light Attack', emoji='👆', style=discord.ButtonStyle.blurple)
     async def light_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.users_moves[user].append('L')
+        self.player_info_dict[user]["moves"].append(self.users_move_objs[user][0])
         
         await self.update_embed(interaction)
 
     @discord.ui.button(label='Heavy Attack', emoji='🥊', style=discord.ButtonStyle.red)
     async def heavy_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.users_moves[user].append('H')
+        self.users_moves[user]["moves"].append(self.users_move_objs[user][1])
         
         await self.update_embed(interaction)
     
     @discord.ui.button(label='Block', emoji='🛡️', style=discord.ButtonStyle.gray)
     async def block_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.users_moves[user].append('B')
+        self.users_moves[user]["moves"].append(self.users_move_objs[user][2])
 
         await self.update_embed(interaction)
     
@@ -66,7 +72,7 @@ class ActionView(View):
         return
     
     async def update_embed(self, interaction: discord.Interaction) -> None:
-        field_id = self.player_to_id[interaction.user]
+        field_id = self.users_to_id[interaction.user]
         original_field = self.embed.fields[field_id]
         self.embed.set_field_at(
             index=field_id, 
