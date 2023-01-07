@@ -1,9 +1,8 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import asyncio
+import traceback
 
-from bot.util.action_view import ActionView
 from bot.duel_helpers.duel_manager import DuelManager
 
 class Duel(commands.Cog):
@@ -24,12 +23,13 @@ class Duel(commands.Cog):
 
         manager = DuelManager(player1, player2, interaction)
         
-        await manager.run()
+        await manager.run_game()
         return
 
     @duel.error
     async def on_duel_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         await interaction.channel.send(str(error))
+        traceback.print_exc()
 
 async def setup(bot):
     await bot.add_cog(Duel(bot))

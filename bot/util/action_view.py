@@ -1,12 +1,14 @@
 import discord
 from discord.ui import View
-from duel_helpers.duel_moves.basic_moves import *
+from bot.duel_helpers.duel_moves.basic_moves import *
+import traceback
 
 DEFAULT_MOVES = [LightAttack(), HeavyAttack(), Block()]
 
 class ActionView(View):
     def __init__(self, 
-        player1, player2, embed : discord.Embed, 
+        player1, player2, 
+        embed : discord.Embed, 
         player_info_dict : dict,
         player1_moves = DEFAULT_MOVES, 
         player2_moves = DEFAULT_MOVES, 
@@ -17,7 +19,10 @@ class ActionView(View):
         self.player2 = player2
         self.embed = embed
         
-        self.player_info_dict = player_info_dict
+        self.users_moves = {
+            self.player1 : [],
+            self.player2 : []
+        }
         
         self.users_move_objs = {
             self.player1 : player1_moves,
@@ -45,21 +50,21 @@ class ActionView(View):
     @discord.ui.button(label='Light Attack', emoji='👆', style=discord.ButtonStyle.blurple)
     async def light_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.player_info_dict[user]["moves"].append(self.users_move_objs[user][0])
+        self.users_moves[user].append(self.users_move_objs[user][0])
         
         await self.update_embed(interaction)
 
     @discord.ui.button(label='Heavy Attack', emoji='🥊', style=discord.ButtonStyle.red)
     async def heavy_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.users_moves[user]["moves"].append(self.users_move_objs[user][1])
+        self.users_moves[user].append(self.users_move_objs[user][1])
         
         await self.update_embed(interaction)
     
     @discord.ui.button(label='Block', emoji='🛡️', style=discord.ButtonStyle.gray)
     async def block_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
-        self.users_moves[user]["moves"].append(self.users_move_objs[user][2])
+        self.users_moves[user].append(self.users_move_objs[user][2])
 
         await self.update_embed(interaction)
     
@@ -83,5 +88,13 @@ class ActionView(View):
         await interaction.response.edit_message(embed = self.embed, view=self)
         self.check_finished()
     
-    def get_moves(self) -> dict:
+    def get_moves(self) -> tuple:
+        #Pad the empty spaces in each move list with DoNothing
+        for user, moves in self.users_moves.items():
+            if len(moves) < 3:
+                moves += [DoNothing] * 3 - len(moves)
         return self.users_moves
+    
+    async def on_error(self, interaction: discord.Interaction, error: Exception, item, /) -> None:
+        traceback.print_exc()
+        return await super().on_error(interaction, error, item)

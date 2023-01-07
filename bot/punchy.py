@@ -12,10 +12,11 @@ class Punchy(commands.AutoShardedBot):
         for filename in os.listdir("../Punchy/bot/cogs/commands"):
             if not filename.endswith(".py"):
                 continue
-            try:
-                await self.load_extension("bot.cogs.commands." + filename.replace(".py", ""))
-            except Exception as e:
-                print(str(e))
+            await self.load_extension("bot.cogs.commands." + filename.replace(".py", ""))
+            # try:
+            #     await self.load_extension("bot.cogs.commands." + filename.replace(".py", ""))
+            # except Exception as e:
+            #     print(str(e))
             print(filename.replace(".py", ""))
 
         await super().start(token)

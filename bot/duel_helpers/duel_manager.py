@@ -2,7 +2,7 @@ import discord
 import asyncio
 
 from bot.util.action_view import ActionView
-from duel_moves.basic_moves import *
+from bot.duel_helpers.duel_moves.basic_moves import *
 
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
@@ -38,14 +38,15 @@ class DuelManager:
             await action_view.wait()
 
             #Retrives player inputs and calculate result
-            move_dict = self.action_view.get_moves()
+            move_dict = action_view.get_moves()
 
             #Output results by replacing the choices_embed with the new results_embed
-            p1_moves = move_dict[self.player1]
-            p2_moves = move_dict[self.player2]
+
+            self.players_info_dict[self.player1]["moves"] = move_dict[self.player1]
+            self.players_info_dict[self.player2]["moves"] = move_dict[self.player2]
 
             for x in range(3):
-                self.do_compare(p1_moves[x], p2_moves[x])
+                await self.do_compare()
 
                 
             results_embed = discord.Embed()
@@ -56,15 +57,21 @@ class DuelManager:
             await asyncio.sleep(5)  
             action_view = ActionView(self.player1, self.player2, self.choices_embed, self.players_info_dict)
             await self.interaction.response.edit_message(embed = self.choices_embed, view= action_view)
-            break
+            #break
     
-    async def do_compare(self, p1_move, p2_move):
+    async def do_compare(self):
+        p1_move = self.players_info_dict[self.player1]["moves"].pop()
+        p2_move = self.players_info_dict[self.player2]["moves"].pop()
+
         if p1_move == p2_move:
             return
         
         if p1_move.lose_against(p2_move):
-            p2_move.execute(self.players_info_dict)
+            p2_move.execute(player_info_dict = self.players_info_dict, receiver= self.player1)
             return
         
-        p1_move.execute(self.players_info_dict)
+        if p2_move.lose_against(p1_move):
+            p1_move.execute(player_info_dict = self.players_info_dict, receiver = self.player2)
+            return
+        
 

@@ -1,7 +1,7 @@
 import discord
 import random
 
-from move import Move
+from bot.duel_helpers.duel_moves.move import Move
 
 NOTHINGID = 0
 LIGHTID = 1
@@ -12,8 +12,8 @@ class DoNothing(Move):
     def __init__(self) -> None:
         super().__init__("NA", NOTHINGID, [])
     
-    def lose_against(self, _: object) -> bool:
-        return True
+    def lose_against(self, other_move: object) -> bool:
+        return other_move.id != BLOCKID
         
 class LightAttack(Move):
     def __init__(self) -> None:
