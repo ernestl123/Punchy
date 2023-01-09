@@ -92,7 +92,7 @@ class ActionView(View):
         #Pad the empty spaces in each move list with DoNothing
         for user, moves in self.users_moves.items():
             if len(moves) < 3:
-                moves += [DoNothing] * 3 - len(moves)
+                moves += [DoNothing() for _ in range(3 - len(moves))]
         return self.users_moves
     
     async def on_error(self, interaction: discord.Interaction, error: Exception, item, /) -> None:

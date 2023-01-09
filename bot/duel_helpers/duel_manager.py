@@ -48,8 +48,9 @@ class DuelManager:
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str())
             
             for x in range(3):
-                await self.do_compare()
+                embed_field_value = await self.do_compare()
                 results_embed.description = self.make_health_str()
+                results_embed.add_field(name = f"Round {x}", value = embed_field_value)
                 await self.interaction.edit_original_response(embed=results_embed)
                 await asyncio.sleep(3)
             
@@ -76,15 +77,13 @@ class DuelManager:
         p2_move = self.players_info_dict[self.player2]["moves"].pop()
 
         if p1_move == p2_move:
-            return
+            return "Nothing happened..."
         
         if p1_move.lose_against(p2_move):
-            p2_move.execute(player_info_dict = self.players_info_dict, receiver= self.player1)
-            return
-        
+            return p2_move.execute(player_info_dict = self.players_info_dict, receiver= self.player1, attacker = self.player2)
+            
         if p2_move.lose_against(p1_move):
-            p1_move.execute(player_info_dict = self.players_info_dict, receiver = self.player2)
-            return
+            return p1_move.execute(player_info_dict = self.players_info_dict, receiver = self.player2, attacker = self.player1)
     
     def make_health_str(self):
         player1_str = f"💙{self.make_health_bar(self.player1)} {self.player1_name}"
