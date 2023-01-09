@@ -14,6 +14,9 @@ class DoNothing(Move):
     
     def lose_against(self, other_move: object) -> bool:
         return other_move.id != BLOCKID
+    
+    def __str__(self) -> str:
+        return "🤷‍♂️"
         
 class LightAttack(Move):
     def __init__(self) -> None:
@@ -24,6 +27,9 @@ class LightAttack(Move):
         player_info_dict[receiver]["health"] = max(0,  player_info_dict[receiver]["health"] - damage)
         
         return f"{attacker} dealt {damage} damage to {receiver}!"
+    
+    def __str__(self) -> str:
+        return "👆"
 
 class HeavyAttack(Move):
     def __init__(self) -> None:
@@ -33,6 +39,9 @@ class HeavyAttack(Move):
         damage = random.randint(10, 15)
         player_info_dict[receiver]["health"] = max(0, player_info_dict[receiver]["health"] - damage)
         return f"{attacker} dealt {damage} damage to {receiver}!"
+
+    def __str__(self) -> str:
+        return "🥊"
 
 class Block(Move):
     def __init__(self) -> None:
@@ -44,3 +53,5 @@ class Block(Move):
             return f"{attacker} blocked an attack from {receiver}! {receiver} is stunned!"
         return "Nothing happened..."
     
+    def __str__(self) -> str:
+        return "🛡️"
