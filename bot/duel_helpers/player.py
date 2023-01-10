@@ -37,9 +37,12 @@ class Player:
         self.health_diff = 0
 
     def stun(self):
-        self.moves[1] = DoNothing()
+        self.moves[0] = DoNothing()
     
     def get_move(self):
+        if not self.moves:
+            return DoNothing()
+
         return self.moves.pop(0)
 
     def has_next_move(self):

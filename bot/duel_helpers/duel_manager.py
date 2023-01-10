@@ -44,7 +44,7 @@ class DuelManager:
             for x in range(3):
                 embed_field_value, versus_str = await self.do_compare()
                 results_embed.description = self.make_health_str()
-                results_embed.add_field(name= f"Round {x} - {versus_str}", value = embed_field_value, inline = False)
+                results_embed.add_field(name= f"Round {x+1} - {versus_str}", value = embed_field_value, inline = False)
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
                 await asyncio.sleep(7)
             
@@ -106,4 +106,4 @@ class DuelManager:
         missing_health_display = "-" * (max_bars - int(health/dash_convert))
 
         health_diff_str = f"({player_boj.health_diff})" if player_boj.health_diff else ""
-        return "|" + health_display + f"| {health} " + player_boj.emoji + health_diff_str
+        return "|" + health_display + f"| {health} " + player_boj.emoji  + health_diff_str
