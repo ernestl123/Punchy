@@ -11,7 +11,6 @@ class Player:
         self.health_diff = 0
         self.emoji = emoji
 
-    
     def take_damage(self, damage : int):
         self.health = max(0,  self.health - damage)
         self.health_diff -= damage
@@ -50,4 +49,3 @@ class Player:
     
     def __str__(self) -> str:
         return self.name
-

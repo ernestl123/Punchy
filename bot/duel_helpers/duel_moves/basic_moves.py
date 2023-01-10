@@ -1,4 +1,4 @@
-import discord
+import json
 import random
 
 from bot.duel_helpers.duel_moves.move import Move

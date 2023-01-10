@@ -1,5 +1,3 @@
-import discord
-
 class Move:
     def __init__(self, name: str, id: id, lose_list: list) -> None:
         self.name = name
@@ -12,7 +10,7 @@ class Move:
 
         return other_move.id in self.lose_list
     
-    def execute(self, player_info_dict = None, receiver: discord.User = None, attacker: discord.User = None):
+    def execute(self, receiver = None, attacker = None):
         return
     
     def __eq__(self, __o: object) -> bool:
