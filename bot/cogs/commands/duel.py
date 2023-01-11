@@ -2,9 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-import traceback
-import json
-import asyncio
+import logging
 
 from bot.duel_helpers.duel_manager import DuelManager
 
@@ -32,7 +30,7 @@ class Duel(commands.Cog):
     @duel.error
     async def on_duel_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         await interaction.channel.send(str(error))
-        traceback.print_exc()     
+        logging.exception("ERROR ERROR ERROR DOES NOT COMPUTEඞඞඞ")
         
 async def setup(bot):
     await bot.add_cog(Duel(bot))

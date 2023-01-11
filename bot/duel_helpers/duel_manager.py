@@ -5,6 +5,8 @@ from bot.util.action_view import ActionView
 from bot.duel_helpers.player import Player
 
 NOTHING_URL = "https://i.kym-cdn.com/photos/images/newsfeed/001/057/927/eac.gif"
+NOCONTEST_URL = "https://media.tenor.com/MAn0YqfO1isAAAAC/no-contest-super-smash-brothers.gif"
+VICTORY_URL = "https://y.yarn.co/f46efe87-f84a-4166-a2fa-0d2ef9971fe3_text.gif"
 
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
@@ -24,7 +26,7 @@ class DuelManager:
         }
 
         #Display embed for when players are choosing moves
-        self.choices_embed = discord.Embed(colour = discord.Colour.greyple(), description=self.make_health_str())
+        self.choices_embed = discord.Embed(colour = discord.Colour.greyple(), description=self.make_health_str(), color=discord.Colour.orange())
         self.choices_embed.set_footer(text = f"{player1_name}, {player2_name} please pick your combination")
         self.choices_embed.add_field(name = player1_name, value = "___")
         self.choices_embed.add_field(name = player2_name, value = "___")
@@ -43,7 +45,7 @@ class DuelManager:
             await action_view.wait()
 
             #Output results by replacing the choices_embed with the new results_embed
-            results_embed = discord.Embed(title = "Results:", description=self.make_health_str())
+            results_embed = discord.Embed(title = "Results:", description=self.make_health_str(), color=discord.Colour.fuchsia())
 
             for x in range(3):
                 (embed_field_value, gif_url), versus_str = await self.do_compare()
@@ -51,9 +53,10 @@ class DuelManager:
                 results_embed.add_field(name= f"Round {x+1} - {versus_str}", value = embed_field_value, inline = False)
                 results_embed.set_image(url = gif_url)
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
-                await asyncio.sleep(5)
+                await asyncio.sleep(7)
                 
                 if self.is_finished():
+                    await self.end_game()
                     return
 
             #Refreshes action view and replace current embed with the choices_embed
@@ -106,3 +109,27 @@ class DuelManager:
     
     def is_finished(self):
         return self.player1_obj.health <= 0 or self.player2_obj.health <= 0
+
+    #just ike the marvel movie
+    async def end_game(self):
+        p1_health = self.player1_obj.health
+        p2_health = self.player2_obj.health
+        
+        p1_name = self.player1_obj.name
+        p2_name = self.player2_obj.name
+
+        embed = discord.Embed(title = "Match Results", color=discord.Colour.green())
+
+        if p1_health <= 0 and p2_health <= 0:
+            embed.description = "Double KO! It's a draw!"
+            embed.set_image(url = NOCONTEST_URL)
+        elif p1_health <= 0:
+            embed.description = f"**{p2_name}** wins!"
+            embed.set_image(url = VICTORY_URL)
+            embed.set_thumbnail(url = self.player2.avatar)
+        elif p2_health <= 0:
+            embed.description = f"**{p1_name}** wins!"
+            embed.set_image(url = VICTORY_URL)
+            embed.set_thumbnail(url = self.player1.avatar)
+        
+        await self.interaction.edit_original_response(embed = embed)
