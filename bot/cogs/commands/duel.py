@@ -32,21 +32,7 @@ class Duel(commands.Cog):
     @duel.error
     async def on_duel_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         await interaction.channel.send(str(error))
-        traceback.print_exc()
-
-    @app_commands.command(name = "test", description= "yeet")
-    async def test(self, interaction : discord.Interaction):
-        print("testing")
-        with open("basic_duel_message.json", 'r') as f:
-            gifs_dict = json.load(f)
-        
-        for move, message_dict in gifs_dict.items():
-            print(move)
-            for message, gif in message_dict.items():
-                embed = discord.Embed(title = f"{move} - {message}").set_image(url = gif)
-                await interaction.channel.send(embed = embed)
-                await asyncio.sleep(5)
-        
+        traceback.print_exc()     
         
 async def setup(bot):
     await bot.add_cog(Duel(bot))

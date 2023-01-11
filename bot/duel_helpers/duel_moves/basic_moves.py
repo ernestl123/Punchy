@@ -15,6 +15,8 @@ LIGHT_MESSAGES = MESSAGE_DICT["light attack"]
 HEAVY_MESSAGES = MESSAGE_DICT["heavy attack"]
 BLOCK_MESSAGES = MESSAGE_DICT["block"]
 
+NOTHING_URL = "https://i.kym-cdn.com/photos/images/newsfeed/001/057/927/eac.gif"
+
 class DoNothing(Move):
     def __init__(self) -> None:
         super().__init__("NA", NOTHINGID, [])
@@ -34,7 +36,6 @@ class LightAttack(Move):
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(LIGHT_MESSAGES.items()))
         return message.format(attacker.name, receiver.name), gif_url
-        return f"{attacker} dealt {damage} damage to {receiver}!"
     
     def __str__(self) -> str:
         return "👆"
@@ -61,7 +62,8 @@ class Block(Move):
             receiver.stun()
             message, gif_url = random.choice(list(BLOCK_MESSAGES.items()))
             return message.format(attacker.name, receiver.name), gif_url
-        return "Nothing happened..."
+            
+        return "Nothing happened...", NOTHING_URL
     
     def __str__(self) -> str:
         return "🛡️"
