@@ -6,8 +6,9 @@ from bot.duel_helpers.player import Player
 
 NOTHING_URL = "https://i.kym-cdn.com/photos/images/newsfeed/001/057/927/eac.gif"
 NOCONTEST_URL = "https://media.tenor.com/MAn0YqfO1isAAAAC/no-contest-super-smash-brothers.gif"
-VICTORY_URL = "https://y.yarn.co/f46efe87-f84a-4166-a2fa-0d2ef9971fe3_text.gif"
+VICTORY_URL = "https://thumbs.gfycat.com/SoggyJoyousCockatiel-size_restricted.gif"
 FORFEIT_URL = "https://media.tenor.com/U0D6jtPHPeEAAAAC/paz-white-flag.gif"
+IDLE_URL = "https://media.tenor.com/6vEudwCrEAwAAAAd/idle-animation-fighting-games.gif"
 
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
@@ -32,16 +33,14 @@ class DuelManager:
         self.choices_embed.add_field(name = player1_name, value = "___")
         self.choices_embed.add_field(name = player2_name, value = "___")
         self.choices_embed.set_author(name=f"{player1_name} 🆚 {player2_name}")
+        self.choices_embed.set_image(url = IDLE_URL)
         
         self.interaction = interaction
 
     async def run_game(self) -> None:
-        action_view = ActionView(self.player1, self.player2, self.choices_embed, self.player_obj_dict)
-        await self.interaction.response.send_message(embed = self.choices_embed, view = action_view)
-
-        #Run the game while both players have health > 0
-        #TODO: Add break statement when game finishes
         while True:
+            action_view = ActionView(self.player1, self.player2, self.choices_embed, self.player_obj_dict)
+            await self.interaction.edit_original_response(embed = self.choices_embed, view = action_view)
             #Wait for user input
             await action_view.wait()
 
@@ -54,7 +53,7 @@ class DuelManager:
             for x in range(3):
                 (embed_field_value, gif_url), versus_str = await self.do_compare()
                 results_embed.description = self.make_health_str()
-                results_embed.add_field(name= f"Round {x+1} - {versus_str}", value = embed_field_value, inline = False)
+                results_embed.add_field(name= f"Move {x+1} - {versus_str}", value = embed_field_value, inline = False)
                 results_embed.set_image(url = gif_url)
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
                 await asyncio.sleep(7)
@@ -71,9 +70,6 @@ class DuelManager:
                 self.choices_embed.add_field(name = player_obj.name, value = "___")
 
             self.choices_embed.description = self.make_health_str()
-
-            action_view = ActionView(self.player1, self.player2, self.choices_embed, self.player_obj_dict)
-            await self.interaction.edit_original_response(embed = self.choices_embed, view = action_view)
     
     async def do_compare(self):
         p1_move = self.player1_obj.get_move()
@@ -116,15 +112,13 @@ class DuelManager:
 
     #just ike the marvel movie
     async def end_game(self, forfeit_user = None):
-        embed = discord.Embed(title = "Match Results", color=discord.Colour.green())
-            
+        embed = discord.Embed(title = "Match Results🏆", color=discord.Colour.green())
+
         p1_health = self.player1_obj.health
         p2_health = self.player2_obj.health
         
         p1_name = self.player1_obj.name
         p2_name = self.player2_obj.name
-
-        embed = discord.Embed(title = "Match Results", color=discord.Colour.green())
 
         if p1_health <= 0 and p2_health <= 0:
             embed.description = "Double KO! It's a draw!"
@@ -138,7 +132,8 @@ class DuelManager:
             embed.set_image(url = VICTORY_URL)
             embed.set_thumbnail(url = self.player1.avatar)
         elif forfeit_user:
-            embed.description = f"{forfeit_user.mention} has forfeited..."
+            embed.description = f"{forfeit_user.mention} has forfeited...lol"
+            embed.set_footer(text = "Guess someone was too scared...")
             embed.set_image(url = FORFEIT_URL)
             embed.color = discord.Colour.dark_blue()
             embed.set_thumbnail(url = forfeit_user.avatar)

@@ -4,6 +4,8 @@ import traceback
 
 import logging
 
+MAX_CHOICES = 3
+
 class ActionView(View):
     def __init__(self, 
         player1, player2, 
@@ -34,19 +36,19 @@ class ActionView(View):
             return False
 
         #If user already selected all choices
-        if len(self.player_obj_dict[user].moves) > 2:
+        if len(self.player_obj_dict[user].moves) >= MAX_CHOICES:
             return False
 
         return True
 
-    @discord.ui.button(label='Light Attack', emoji='👆', style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label='Light', emoji='👆', style=discord.ButtonStyle.blurple)
     async def light_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
         self.player_obj_dict[user].add_light()
         
         await self.update_embed(interaction)
 
-    @discord.ui.button(label='Heavy Attack', emoji='🥊', style=discord.ButtonStyle.red)
+    @discord.ui.button(label='Heavy', emoji='🥊', style=discord.ButtonStyle.red)
     async def heavy_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
         self.player_obj_dict[user].add_heavy()
@@ -70,7 +72,7 @@ class ActionView(View):
 
     def check_finished(self) -> None:
         for player in self.player_obj_dict.values():
-            if len(player.moves) < 3:
+            if len(player.moves) < MAX_CHOICES:
                 return
 
         self.stop()
@@ -83,7 +85,7 @@ class ActionView(View):
         self.embed.set_field_at(
             index=field_id, 
             name = original_field.name,
-            value="❓" * moves_len + "_" * (3 - moves_len)
+            value="❓" * moves_len + "_" * (MAX_CHOICES - moves_len)
         )
 
         await interaction.response.edit_message(embed = self.embed, view=self)
@@ -93,4 +95,3 @@ class ActionView(View):
         logging.exception("Exception occured in action_view")
         traceback.print_exc()
         return await super().on_error(interaction, error, item)
-

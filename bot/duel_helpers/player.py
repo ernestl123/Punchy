@@ -4,7 +4,7 @@ DEFAULT_MOVES = [LightAttack(), HeavyAttack(), Block()]
 
 class Player:
     def __init__(self, name, emoji, move_options = DEFAULT_MOVES) -> None:
-        self.name = name
+        self.name = f"**{name}**"
         self.moves = list()
         self.move_options = move_options
         self.health = 100
