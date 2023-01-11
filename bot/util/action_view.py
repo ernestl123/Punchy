@@ -2,6 +2,8 @@ import discord
 from discord.ui import View
 import traceback
 
+import logging
+
 class ActionView(View):
     def __init__(self, 
         player1, player2, 
@@ -21,6 +23,8 @@ class ActionView(View):
             self.player1 : 0,
             self.player2 : 1
         }
+
+        self.forfeit_user = None
 
     async def interaction_check(self, interaction) -> bool:
         user = interaction.user
@@ -49,13 +53,21 @@ class ActionView(View):
         
         await self.update_embed(interaction)
     
-    @discord.ui.button(label='Block', emoji='🛡️', style=discord.ButtonStyle.gray)
+    @discord.ui.button(label='Block', emoji='🛡️', style=discord.ButtonStyle.green)
     async def block_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
         self.player_obj_dict[user].add_block()
 
         await self.update_embed(interaction)
     
+    @discord.ui.button(label="Forefeit", emoji="🏳️", style=discord.ButtonStyle.grey)
+    async def forfeit_button(self, interaction: discord.Interaction, _) -> None:
+        user = interaction.user
+        
+        await interaction.response.defer()
+        self.forfeit_user = user
+        self.stop()
+
     def check_finished(self) -> None:
         for player in self.player_obj_dict.values():
             if len(player.moves) < 3:
@@ -78,5 +90,7 @@ class ActionView(View):
         self.check_finished()
     
     async def on_error(self, interaction: discord.Interaction, error: Exception, item, /) -> None:
+        logging.exception("Exception occured in action_view")
         traceback.print_exc()
         return await super().on_error(interaction, error, item)
+

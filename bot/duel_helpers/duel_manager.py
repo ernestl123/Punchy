@@ -7,6 +7,7 @@ from bot.duel_helpers.player import Player
 NOTHING_URL = "https://i.kym-cdn.com/photos/images/newsfeed/001/057/927/eac.gif"
 NOCONTEST_URL = "https://media.tenor.com/MAn0YqfO1isAAAAC/no-contest-super-smash-brothers.gif"
 VICTORY_URL = "https://y.yarn.co/f46efe87-f84a-4166-a2fa-0d2ef9971fe3_text.gif"
+FORFEIT_URL = "https://media.tenor.com/U0D6jtPHPeEAAAAC/paz-white-flag.gif"
 
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
@@ -44,6 +45,9 @@ class DuelManager:
             #Wait for user input
             await action_view.wait()
 
+            if action_view.forfeit_user:
+                await self.end_game(action_view.forfeit_user)
+                return
             #Output results by replacing the choices_embed with the new results_embed
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str(), color=discord.Colour.fuchsia())
 
@@ -111,7 +115,9 @@ class DuelManager:
         return self.player1_obj.health <= 0 or self.player2_obj.health <= 0
 
     #just ike the marvel movie
-    async def end_game(self):
+    async def end_game(self, forfeit_user = None):
+        embed = discord.Embed(title = "Match Results", color=discord.Colour.green())
+            
         p1_health = self.player1_obj.health
         p2_health = self.player2_obj.health
         
@@ -131,5 +137,10 @@ class DuelManager:
             embed.description = f"**{p1_name}** wins!"
             embed.set_image(url = VICTORY_URL)
             embed.set_thumbnail(url = self.player1.avatar)
+        elif forfeit_user:
+            embed.description = f"{forfeit_user.mention} has forfeited..."
+            embed.set_image(url = FORFEIT_URL)
+            embed.color = discord.Colour.dark_blue()
+            embed.set_thumbnail(url = forfeit_user.avatar)
         
-        await self.interaction.edit_original_response(embed = embed)
+        await self.interaction.edit_original_response(embed = embed, view = None)
