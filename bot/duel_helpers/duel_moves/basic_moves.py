@@ -8,6 +8,13 @@ LIGHTID = 1
 HEAVYID = 2
 BLOCKID = 3
 
+with open("bot/duel_helpers/basic_duel_message.json", 'r') as f:
+    MESSAGE_DICT = json.load(f)
+
+LIGHT_MESSAGES = MESSAGE_DICT["light attack"]
+HEAVY_MESSAGES = MESSAGE_DICT["heavy attack"]
+BLOCK_MESSAGES = MESSAGE_DICT["block"]
+
 class DoNothing(Move):
     def __init__(self) -> None:
         super().__init__("NA", NOTHINGID, [])
@@ -25,7 +32,8 @@ class LightAttack(Move):
     def execute(self, receiver = None, attacker = None):
         damage = random.randint(3, 7)
         receiver.take_damage(damage)
-        
+        message, gif_url = random.choice(list(LIGHT_MESSAGES.items()))
+        return message.format(attacker.name, receiver.name), gif_url
         return f"{attacker} dealt {damage} damage to {receiver}!"
     
     def __str__(self) -> str:
@@ -38,7 +46,8 @@ class HeavyAttack(Move):
     def execute(self, receiver = None, attacker = None):
         damage = random.randint(10, 15)
         receiver.take_damage(damage)
-        return f"{attacker} dealt {damage} damage to {receiver}!"
+        message, gif_url = random.choice(list(HEAVY_MESSAGES.items()))
+        return message.format(attacker.name, receiver.name), gif_url
 
     def __str__(self) -> str:
         return "🥊"
@@ -50,7 +59,8 @@ class Block(Move):
     def execute(self, receiver = None, attacker = None):
         if receiver.has_next_move():
             receiver.stun()
-            return f"{attacker} blocked an attack from {receiver}! {receiver} is stunned!"
+            message, gif_url = random.choice(list(BLOCK_MESSAGES.items()))
+            return message.format(attacker.name, receiver.name), gif_url
         return "Nothing happened..."
     
     def __str__(self) -> str:

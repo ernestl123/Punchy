@@ -1,7 +1,10 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+
 import traceback
+import json
+import asyncio
 
 from bot.duel_helpers.duel_manager import DuelManager
 
@@ -31,5 +34,19 @@ class Duel(commands.Cog):
         await interaction.channel.send(str(error))
         traceback.print_exc()
 
+    @app_commands.command(name = "test", description= "yeet")
+    async def test(self, interaction : discord.Interaction):
+        print("testing")
+        with open("basic_duel_message.json", 'r') as f:
+            gifs_dict = json.load(f)
+        
+        for move, message_dict in gifs_dict.items():
+            print(move)
+            for message, gif in message_dict.items():
+                embed = discord.Embed(title = f"{move} - {message}").set_image(url = gif)
+                await interaction.channel.send(embed = embed)
+                await asyncio.sleep(5)
+        
+        
 async def setup(bot):
     await bot.add_cog(Duel(bot))

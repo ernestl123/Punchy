@@ -4,6 +4,8 @@ import asyncio
 from bot.util.action_view import ActionView
 from bot.duel_helpers.player import Player
 
+NOTHING_URL = "https://i.kym-cdn.com/photos/images/newsfeed/001/057/927/eac.gif"
+
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
     def __init__(self, player1 : discord.User, player2: discord.User, interaction) -> None:
@@ -44,9 +46,10 @@ class DuelManager:
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str())
 
             for x in range(3):
-                embed_field_value, versus_str = await self.do_compare()
+                (embed_field_value, gif_url), versus_str = await self.do_compare()
                 results_embed.description = self.make_health_str()
                 results_embed.add_field(name= f"Round {x+1} - {versus_str}", value = embed_field_value, inline = False)
+                results_embed.set_image(url = gif_url)
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
                 await asyncio.sleep(5)
                 
@@ -65,7 +68,7 @@ class DuelManager:
             action_view = ActionView(self.player1, self.player2, self.choices_embed, self.player_obj_dict)
             await self.interaction.edit_original_response(embed = self.choices_embed, view = action_view)
     
-    async def do_compare(self) -> tuple:
+    async def do_compare(self):
         p1_move = self.player1_obj.get_move()
         p2_move = self.player2_obj.get_move()
 
@@ -74,7 +77,7 @@ class DuelManager:
 
         versus_str = f"{p1_move} vs {p2_move}"
         if p1_move == p2_move:
-            return "Nothing happened...", versus_str
+            return ("Nothing happened...", NOTHING_URL), versus_str
         
         if p1_move.lose_against(p2_move):
             return p2_move.execute(receiver= self.player1_obj, attacker = self.player2_obj), versus_str

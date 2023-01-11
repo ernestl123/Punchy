@@ -1,8 +1,6 @@
 import discord
 from discord.ui import View
-from bot.duel_helpers.duel_moves.basic_moves import *
 import traceback
-
 
 class ActionView(View):
     def __init__(self, 
