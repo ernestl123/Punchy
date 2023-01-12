@@ -45,7 +45,7 @@ class Player:
         return self.moves.pop(0)
 
     def has_next_move(self):
-        return len(self.moves) >= 2
+        return len(self.moves) >= 1
     
     def __str__(self) -> str:
         return self.name

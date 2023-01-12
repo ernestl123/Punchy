@@ -28,7 +28,7 @@ class DuelManager:
         }
 
         #Display embed for when players are choosing moves
-        self.choices_embed = discord.Embed(colour = discord.Colour.greyple(), description=self.make_health_str(), color=discord.Colour.orange())
+        self.choices_embed = discord.Embed(description=self.make_health_str(), color=discord.Colour.red())
         self.choices_embed.set_footer(text = f"{player1_name}, {player2_name} please pick your combination")
         self.choices_embed.add_field(name = player1_name, value = "___")
         self.choices_embed.add_field(name = player2_name, value = "___")
@@ -56,7 +56,7 @@ class DuelManager:
                 results_embed.add_field(name= f"Move {x+1} - {versus_str}", value = embed_field_value, inline = False)
                 results_embed.set_image(url = gif_url)
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
-                await asyncio.sleep(7)
+                await asyncio.sleep(6)
                 
                 if self.is_finished():
                     await self.end_game()
@@ -92,7 +92,7 @@ class DuelManager:
         player1_str = f"{self.player1_obj.name}\n{self.make_health_bar(self.player1_obj)}"
         player2_str = f"{self.player2_obj.name}\n{self.make_health_bar(self.player2_obj)}"
         
-        return player1_str + "\n\n" + player2_str
+        return player1_str + "\n" + player2_str
             
     def make_health_bar(self, player_boj : Player) -> str:
         health = player_boj.health

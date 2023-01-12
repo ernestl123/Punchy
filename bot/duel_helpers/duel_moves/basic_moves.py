@@ -32,7 +32,7 @@ class LightAttack(Move):
         super().__init__("Light", LIGHTID, [BLOCKID])
     
     def execute(self, receiver = None, attacker = None):
-        damage = random.randint(3, 7)
+        damage = random.randint(6, 12)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(LIGHT_MESSAGES.items()))
         return message.format(attacker.name, receiver.name), gif_url
@@ -45,7 +45,7 @@ class HeavyAttack(Move):
         super().__init__("Heavy", HEAVYID, [LIGHTID])
     
     def execute(self, receiver = None, attacker = None):
-        damage = random.randint(10, 15)
+        damage = random.randint(13, 18)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(HEAVY_MESSAGES.items()))
         return message.format(attacker.name, receiver.name), gif_url
@@ -63,7 +63,7 @@ class Block(Move):
             message, gif_url = random.choice(list(BLOCK_MESSAGES.items()))
             return message.format(attacker.name, receiver.name), gif_url
             
-        return "Nothing happened...", NOTHING_URL
+        return "Nothing happened...(It's the last move)", NOTHING_URL
     
     def __str__(self) -> str:
         return "🛡️"
