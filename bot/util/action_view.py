@@ -94,4 +94,5 @@ class ActionView(View):
     async def on_error(self, interaction: discord.Interaction, error: Exception, item, /) -> None:
         logging.exception("Exception occured in action_view")
         traceback.print_exc()
+
         return await super().on_error(interaction, error, item)
