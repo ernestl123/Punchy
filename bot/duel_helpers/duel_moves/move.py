@@ -11,6 +11,7 @@ class Move:
         return other_move.id in self.lose_list
     
     def execute(self, receiver = None, attacker = None):
+        attacker.last_hit = self.name
         return
     
     def __eq__(self, __o: object) -> bool:

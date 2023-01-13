@@ -35,6 +35,7 @@ class LightAttack(Move):
         damage = random.randint(6, 12)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(LIGHT_MESSAGES.items()))
+        super().execute(receiver, attacker)
         return message.format(attacker.name, receiver.name), gif_url
     
     def __str__(self) -> str:
@@ -48,6 +49,7 @@ class HeavyAttack(Move):
         damage = random.randint(13, 18)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(HEAVY_MESSAGES.items()))
+        super().execute(receiver, attacker)
         return message.format(attacker.name, receiver.name), gif_url
 
     def __str__(self) -> str:
@@ -61,6 +63,7 @@ class Block(Move):
         if receiver.has_next_move():
             receiver.stun()
             message, gif_url = random.choice(list(BLOCK_MESSAGES.items()))
+            super().execute(receiver, attacker)
             return message.format(attacker.name, receiver.name), gif_url
             
         return "Nothing happened...(It's the last move)", NOTHING_URL

@@ -10,6 +10,7 @@ class Player:
         self.health = 100
         self.health_diff = 0
         self.emoji = emoji
+        self.last_hit = ""
 
     def take_damage(self, damage : int):
         self.health = max(0,  self.health - damage)
@@ -32,6 +33,7 @@ class Player:
         self.health_diff = 0
         
     def new_round(self):
+        self.last_hit = ""
         self.moves = list()
         self.health_diff = 0
 
