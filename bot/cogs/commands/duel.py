@@ -24,7 +24,7 @@ class Duel(commands.Cog):
         player1, player2 = interaction.user, user
 
         if player1 in self.duel_users:
-            await interaction.response.send_message("You're currently participating in another duel!'", ephemeral=True)
+            await interaction.response.send_message("You're currently participating in another duel!", ephemeral=True)
             return
         
         if player2 in self.duel_users:
@@ -42,6 +42,8 @@ class Duel(commands.Cog):
 
         if not accept_view.value:
             await interaction.edit_original_response(content = f"Ey yo {player2.mention} chickened out lmao.", embed = None, view = None)
+            self.duel_users.remove(player1)
+            self.duel_users.remove(player2)
             return
 
         manager = DuelManager(player1, player2, interaction)
@@ -58,7 +60,15 @@ class Duel(commands.Cog):
 
     @duel.error
     async def on_duel_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        await interaction.channel.send(str(error))
+        if isinstance(error, app_commands.CommandOnCooldown):
+            return;
+        embed = discord.Embed(
+            title = f"💀❌An error has occured with command `duel` used by `{interaction.user}`",
+            description=str(error),
+            color=discord.Colour.brand_red()
+        )
+
+        await interaction.channel.send(embed = embed)
         logging.exception("ERROR ERROR ERROR DOES NOT COMPUTEඞඞඞ")
 
         

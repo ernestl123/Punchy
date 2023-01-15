@@ -7,7 +7,7 @@ import logging.handlers
 
 class Punchy(commands.AutoShardedBot):
     def __init__(self, command_prefix = commands.when_mentioned, **kwargs) -> None:
-        super().__init__(command_prefix=command_prefix, **kwargs)
+        super().__init__(command_prefix=command_prefix, activity=discord.Game(name="/help", type=1), **kwargs)
 
     async def start(self, token : str):
         logging.basicConfig(filename='discord.log', encoding='utf-8', level=logging.INFO, filemode="w")
@@ -21,5 +21,8 @@ class Punchy(commands.AutoShardedBot):
             except:
                 logging.exception("ERROR ERROR ERROR DOES NOT COMPUTEඞඞඞ")
 
-        print("Punchy is up and ready to roll!")
         await super().start(token)
+    
+    async def on_ready(self):
+        logging.info("Punchy is up and ready to roll!")
+        print("Punchy is up and ready to roll!")

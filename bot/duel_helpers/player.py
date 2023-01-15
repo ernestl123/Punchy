@@ -3,13 +3,14 @@ from bot.duel_helpers.duel_moves.basic_moves import *
 DEFAULT_MOVES = [LightAttack(), HeavyAttack(), Block()]
 
 class Player:
-    def __init__(self, name, emoji, move_options = DEFAULT_MOVES) -> None:
+    def __init__(self, name, emoji, field_id, move_options = DEFAULT_MOVES) -> None:
         self.name = f"**{name}**"
         self.moves = list()
         self.move_options = move_options
+        self.field_id = field_id
+        self.emoji = emoji
         self.health = 100
         self.health_diff = 0
-        self.emoji = emoji
         self.last_hit = ""
 
     def take_damage(self, damage : int):

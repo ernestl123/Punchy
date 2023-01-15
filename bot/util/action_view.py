@@ -19,13 +19,6 @@ class ActionView(View):
         self.embed = embed
         
         self.player_obj_dict = player_obj_dict
-
-        #For embed field ID's
-        self.users_to_id = {
-            self.player1 : 0,
-            self.player2 : 1
-        }
-
         self.forfeit_user = None
 
     async def interaction_check(self, interaction) -> bool:
@@ -79,9 +72,12 @@ class ActionView(View):
         return
     
     async def update_embed(self, interaction: discord.Interaction) -> None:
-        field_id = self.users_to_id[interaction.user]
+        player_obj = self.player_obj_dict[interaction.user]
+        field_id = player_obj.field_id
         original_field = self.embed.fields[field_id]
-        moves_len = len(self.player_obj_dict[interaction.user].moves)
+
+        moves_len = len(player_obj.moves)
+
         self.embed.set_field_at(
             index=field_id, 
             name = original_field.name,

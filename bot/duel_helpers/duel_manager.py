@@ -21,8 +21,8 @@ class DuelManager:
         self.player1 = player1
         self.player2 = player2
 
-        self.player1_obj = Player(player1_name, "💙")
-        self.player2_obj = Player(player2_name, "❤️")
+        self.player1_obj = Player(name = player1_name, emoji = "💙", field_id = 0)
+        self.player2_obj = Player(name = player2_name, emoji = "❤️", field_id = 1)
 
         self.player_obj_dict = {
             player1 : self.player1_obj,
@@ -31,7 +31,7 @@ class DuelManager:
 
         #Display embed for when players are choosing moves
         self.choices_embed = discord.Embed(description=self.make_health_str(), color=discord.Colour.red())
-        self.choices_embed.set_footer(text = f"{player1_name}, {player2_name} please pick your combination")
+        self.choices_embed.set_footer(text = "Pick your combos!")
         self.choices_embed.add_field(name = player1_name, value = "___")
         self.choices_embed.add_field(name = player2_name, value = "___")
         self.choices_embed.set_author(name=f"{player1_name} 🆚 {player2_name}")
@@ -63,11 +63,14 @@ class DuelManager:
             #Output results by replacing the choices_embed with the new results_embed
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str(), color=discord.Colour.fuchsia())
 
+            #Loop through all three moves of both users, compare and show winner of each move
             for x in range(3):
                 (embed_field_value, gif_url), versus_str = await self.do_compare()
+
                 results_embed.description = self.make_health_str()
                 results_embed.add_field(name= f"Move {x+1} - {versus_str}", value = embed_field_value, inline = False)
                 results_embed.set_image(url = gif_url)
+                
                 await self.interaction.edit_original_response(embed = results_embed, view = None)
                 await asyncio.sleep(6)
                 

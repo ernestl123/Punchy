@@ -66,7 +66,7 @@ class Block(Move):
             super().execute(receiver, attacker)
             return message.format(attacker.name, receiver.name), gif_url
             
-        return "Nothing happened...(It's a successful blcok on the last move)", NOTHING_URL
+        return "Nothing happened...(It's a successful block on the last move)", NOTHING_URL
     
     def __str__(self) -> str:
         return "🛡️"
