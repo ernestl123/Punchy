@@ -8,7 +8,7 @@ from bot.punchy import Punchy
 async def run_punchy() -> None:
     bot = Punchy(intents = discord.Intents.default())
 
-    with open("key.json", 'r') as f:
+    with open("secret.json", 'r') as f:
         key = json.load(f)["key"]
     async with bot:
         await bot.start(key)

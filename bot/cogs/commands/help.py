@@ -23,13 +23,12 @@ EMBED.set_footer(text = "Behold my amazing diagram that I drew by hand (if you c
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
     
     @app_commands.command(name = "help", description = "How to play duel!")
     @app_commands.checks.cooldown(1, 5.0, key=lambda i: (i.guild_id, i.user.id))
     async def help(self, interaction: discord.Interaction):
         await interaction.response.send_message(file = IMAGE, embed = EMBED)
         return
-
+    
 async def setup(bot) -> None:
     await bot.add_cog(Help(bot))

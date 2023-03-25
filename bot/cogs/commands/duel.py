@@ -12,25 +12,30 @@ class Duel(commands.Cog):
         self.bot = bot
         self.duel_users = set()
     
+    #Bot check function for commands
     def check_bot(interaction: discord.Interaction) -> bool:
         return interaction.user
 
     @app_commands.command(name = "duel", description = "Challenge another player to a duel!")
     @app_commands.checks.cooldown(1, 5.0, key=lambda i: (i.guild_id, i.user.id))
     async def duel(self, interaction: discord.Interaction, user: discord.Member):
+        #If selected user is a bot
         if user.bot:
             await interaction.response.send_message("You can't challenge a bot! You'll definetly lose!", ephemeral=True)
             return
+        
         player1, player2 = interaction.user, user
 
+        #If command user is in a duel
         if player1 in self.duel_users:
             await interaction.response.send_message("You're currently participating in another duel!", ephemeral=True)
             return
-        
+        #If selected user is in a duel
         if player2 in self.duel_users:
             await interaction.response.send_message(f"{player2.mention} is currently in a duel!", ephemeral=True)
             return
 
+        #Start duel
         self.duel_users.add(player1)
         self.duel_users.add(player2)
         accept_view = AcceptView(user)
