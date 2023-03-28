@@ -55,7 +55,7 @@ class ActionView(View):
 
         await self.update_embed(interaction)
     
-    @discord.ui.button(label="Forefeit", emoji="🏳️", style=discord.ButtonStyle.grey)
+    @discord.ui.button(label="Forfeit", emoji="🏳️", style=discord.ButtonStyle.grey)
     async def forfeit_button(self, interaction: discord.Interaction, _) -> None:
         user = interaction.user
         

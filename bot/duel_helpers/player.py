@@ -9,7 +9,7 @@ class Player:
         self.move_options = move_options
         self.field_id = field_id
         self.emoji = emoji
-        self.health = 100
+        self.health = 1
         self.health_diff = 0
         self.last_hit = ""
 

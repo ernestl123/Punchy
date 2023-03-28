@@ -10,11 +10,11 @@ VICTORY_URL = "https://thumbs.gfycat.com/SoggyJoyousCockatiel-size_restricted.gi
 FORFEIT_URL = "https://media.tenor.com/U0D6jtPHPeEAAAAC/paz-white-flag.gif"
 IDLE_URL = "https://media.tenor.com/6vEudwCrEAwAAAAd/idle-animation-fighting-games.gif"
 MAX_AFK = 2
-MAX_ROUNDS = 30
+MAX_ROUNDS = 20
 
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
-    def __init__(self, player1 : discord.User, player2: discord.User, interaction) -> None:
+    def __init__(self, player1 : discord.User, player2: discord.User, interaction, bot) -> None:
         player1_name = player1.nick if player1.nick else player1.name
         player2_name = player2.nick if player2.nick else player2.name
 
@@ -38,6 +38,7 @@ class DuelManager:
         self.choices_embed.set_image(url = IDLE_URL)
         
         self.interaction = interaction
+        self.bot = bot
 
         self.both_afk_count = 0
 
@@ -45,7 +46,7 @@ class DuelManager:
         round_count = 1
         while True:
             if round_count == MAX_ROUNDS:
-                await self.end_game(msg = "Bruh 30 rounds is too much. Nope. Bye bye.")
+                await self.end_game(msg = f"Bruh {MAX_ROUNDS} rounds is too much. Nope. Bye bye.")
                 return
 
             action_view = ActionView(self.player1, self.player2, self.choices_embed, self.player_obj_dict)
@@ -60,6 +61,7 @@ class DuelManager:
             if self.check_afk():
                 await self.end_game(msg="Both players afk'd! I'm calling it!")
                 return
+            
             #Output results by replacing the choices_embed with the new results_embed
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str(), color=discord.Colour.fuchsia())
 
@@ -88,7 +90,7 @@ class DuelManager:
             self.choices_embed.description = self.make_health_str()
             round_count += 1
     
-    async def do_compare(self):
+    async def do_compare(self) -> str:
         p1_move = self.player1_obj.get_move()
         p2_move = self.player2_obj.get_move()
 
@@ -96,16 +98,20 @@ class DuelManager:
         self.player2_obj.reset_health_diff()
 
         versus_str = f"{p1_move} vs {p2_move}"
+
+        #Both players same move = tie
         if p1_move == p2_move:
             return ("Nothing happened...", NOTHING_URL), versus_str
         
+        #If player 2 wins
         if p1_move.lose_against(p2_move):
             return p2_move.execute(receiver= self.player1_obj, attacker = self.player2_obj), versus_str
-            
+        
+        #If player 1 wins
         if p2_move.lose_against(p1_move):
             return p1_move.execute(receiver = self.player2_obj, attacker = self.player1_obj), versus_str
     
-    def make_health_str(self):
+    def make_health_str(self) -> str:
         player1_str = f"{self.player1_obj.name}\n{self.make_health_bar(self.player1_obj)}"
         player2_str = f"{self.player2_obj.name}\n{self.make_health_bar(self.player2_obj)}"
         
@@ -124,11 +130,11 @@ class DuelManager:
         health_diff_str = f"({player_boj.health_diff})" if player_boj.health_diff else ""
         return "|" + health_display + f"| {health} " + player_boj.emoji  + health_diff_str
     
-    def is_finished(self):
+    def is_finished(self) -> bool:
         return self.player1_obj.health <= 0 or self.player2_obj.health <= 0
 
     #just ike the marvel movie
-    async def end_game(self, msg = "Match Results🏆", forfeit_user = None):
+    async def end_game(self, msg = "Match Results🏆", forfeit_user = None) -> None:
         embed = discord.Embed(title = msg, color=discord.Colour.green())
 
         p1_health = self.player1_obj.health
@@ -136,18 +142,26 @@ class DuelManager:
         
         p1_name = self.player1_obj.name
         p2_name = self.player2_obj.name
-
+        
+        winner_id = None
+        loser_id = None
+        #Both players died
         if p1_health <= 0 and p2_health <= 0:
             embed.description = "Double KO! It's a draw!"
             embed.set_image(url = NOCONTEST_URL)
+        #Player 2 wins
         elif p1_health <= 0:
+            winner_id, loser_id = self.player2.id, self.player1.id
             embed.description = f"**{p2_name}** wins!"
             embed.set_image(url = VICTORY_URL)
             embed.set_thumbnail(url = self.player2.avatar)
+        #Player 1 wins
         elif p2_health <= 0:
+            winner_id, loser_id = self.player1.id, self.player2.id
             embed.description = f"**{p1_name}** wins!"
             embed.set_image(url = VICTORY_URL)
             embed.set_thumbnail(url = self.player1.avatar)
+        #A player forfeited
         elif forfeit_user:
             embed.description = f"{forfeit_user.mention} has forfeited...lol"
             embed.set_footer(text = "Guess someone was too scared...")
@@ -158,9 +172,19 @@ class DuelManager:
             embed.description = "No one wins!"
             embed.set_image(url = NOCONTEST_URL)
         
+        #Only update database if not forfeited
+        if not forfeit_user:
+            #If there is a winner, update win stats
+            if winner_id:
+                await self.bot.user_data.add_win(winner_id, loser_id)
+                
+            #Increment game count
+            await self.bot.user_data.add_game(winner_id)
+            await self.bot.user_data.add_game(loser_id)
+
         await self.interaction.edit_original_response(embed = embed, view = None)
 
-    def check_afk(self):
+    def check_afk(self) -> bool:
         if not self.player1_obj.moves and not self.player2_obj.moves:
             self.both_afk_count += 1
         else:

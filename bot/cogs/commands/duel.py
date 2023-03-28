@@ -51,7 +51,7 @@ class Duel(commands.Cog):
             self.duel_users.remove(player2)
             return
 
-        manager = DuelManager(player1, player2, interaction)
+        manager = DuelManager(player1, player2, interaction, self.bot)
         
         try:
             await manager.run_game()  
