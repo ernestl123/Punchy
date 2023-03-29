@@ -94,6 +94,12 @@ class DuelManager:
         p1_move = self.player1_obj.get_move()
         p2_move = self.player2_obj.get_move()
 
+        if p1_move.name.lower() != "na":
+            await self.bot.user_record.add_move_count(self.player1.id, p1_move.name.lower())
+        
+        if p2_move.name.lower() != "na":
+            await self.bot.user_record.add_move_count(self.player2.id, p2_move.name.lower())
+
         self.player1_obj.reset_health_diff()
         self.player2_obj.reset_health_diff()
 

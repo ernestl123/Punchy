@@ -38,8 +38,8 @@ class UserData(Database):
     async def add_game(self, user_id : int) -> None:
         await self.update_data("UserInfo", "GamesTotal", user_id, await self.get_games_total(user_id) + 1)
 
-class UserRecords(Database):
-
+class UserRecord(Database):
+    
     async def get_forfeit_count(self, user_id : int) -> int:
         return await self.get_data("UserInfo", "ForfeitCount", user_id)
     
@@ -52,6 +52,9 @@ class UserRecords(Database):
     async def get_block_count(self, user_id : int) -> int:
         return await self.get_data("UserRecord", "BlockCount", user_id)
     
+    async def get_move_count(self, user_id : int, move_str : str) -> int:
+        return await self.get_data("UserRecord", f"{move_str}Count", user_id)
+    
     async def get_achievments(self, user_id : int) -> list:
         val = await self.get_data("UserRecord", "Achievements", user_id)
         if not val:
@@ -59,3 +62,32 @@ class UserRecords(Database):
             return []
         
         return val
+    
+    async def get_user(self, user_id : int) -> dict:
+        await self.get_light_count(user_id)
+        return await self.db.fetchrow(f"SELECT * FROM UserRecord WHERE id = {user_id}")
+    
+    async def add_forfeit_count(self, user_id : int) ->  None:
+        await self.update_data("UserRecord", "ForfeitCount", user_id, await self.get_forfeit_count(user_id) + 1)
+        return
+    
+    async def add_move_count(self, user_id : int, move_str : str) -> None:
+        await self.update_data("UserRecord", f"{move_str}Count", user_id, await self.get_move_count(user_id, f"{move_str}") + 1)
+
+    async def add_light_count(self, user_id : int) ->  None:
+        await self.update_data("UserRecord", "LightCount", user_id, await self.get_light_count(user_id) + 1)
+        return
+    
+    async def add_heavy_count(self, user_id : int) ->  None:
+        await self.update_data("UserRecord", "HeavyCount", user_id, await self.get_heavy_count(user_id) + 1)
+        return
+    
+    async def add_block_count(self, user_id : int) ->  None:
+        await self.update_data("UserRecord", "BlockCount", user_id, await self.get_block_count(user_id) + 1)
+        return
+
+    async def add_achievement(self, user_id : int, achiev_id : int) ->  None:
+        achievements = await self.get_achievments(user_id)
+        achievements.append(achiev_id)
+        await self.update_data("UserRecord", "Achievements", user_id, achievements)
+        return

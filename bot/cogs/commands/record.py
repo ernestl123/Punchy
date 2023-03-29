@@ -28,6 +28,6 @@ class Record(commands.Cog):
         embed.set_author(name = f"{user.nick if user.nick else user.name} - Record", icon_url = user.avatar)
         embed.set_thumbnail(url = user.avatar)
         await interaction.response.send_message(embed = embed)
-        
+        print(await self.bot.user_record.get_user(user.id))
 async def setup(bot) -> None:
     await bot.add_cog(Record(bot))

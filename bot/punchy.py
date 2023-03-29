@@ -7,7 +7,7 @@ import logging.handlers
 import json
 import asyncpg
 
-from bot.cogs.database.data_helpers import UserData, UserRecords
+from bot.cogs.database.data_helpers import UserData, UserRecord
 
 class Punchy(commands.AutoShardedBot):
     DB_NAME = "punchy"
@@ -32,7 +32,7 @@ class Punchy(commands.AutoShardedBot):
             self.db = db_pool
 
             self.user_data = UserData(self)
-            self.user_records = UserRecords(self)
+            self.user_record = UserRecord(self)
 
             logging.basicConfig(filename='discord.log', encoding='utf-8', level=logging.INFO, filemode="w")
             logging.info(f"Established DB connection to database: {self.DB_NAME}!")
