@@ -25,7 +25,11 @@ class Duel(commands.Cog):
             return
         
         player1, player2 = interaction.user, user
-
+        
+        if player1 == player2:
+            await interaction.response.send_message("You can't duel yourself bruh...", ephemeral=True)
+            return
+        
         #If command user is in a duel
         if player1 in self.duel_users:
             await interaction.response.send_message("You're currently participating in another duel!", ephemeral=True)
