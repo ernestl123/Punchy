@@ -26,15 +26,18 @@ async def yes():
     #     ); 
     # ''')
     # print("Created UserInfo table successfully!")
-    await db.execute('''
-        CREATE TABLE UserRecord (
-            id bigint NOT NULL,
-            LightCount int DEFAULT 0,
-            HeavyCount int DEFAULT 0,
-            BlockCount int DEFAULT 0,
-            Achievements int[]
-        ); 
-    ''')
-    print("Created UserRecord table successfully!")
+    # await db.execute('''
+    #     CREATE TABLE UserRecord (
+    #         id bigint NOT NULL,
+    #         LightCount int DEFAULT 0,
+    #         HeavyCount int DEFAULT 0,
+    #         BlockCount int DEFAULT 0,
+    #         LightHit int DEFAULT 0,
+            # HeavyHit int DEFAULT 0,
+            # BlockHit int DEFAULT 0;
+    #         Achievements int[]
+    #     ); 
+    # ''')
+    # print("Created UserRecord table successfully!")
 asyncio.get_event_loop().run_until_complete(yes())
 

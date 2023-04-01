@@ -9,9 +9,17 @@ class Player:
         self.move_options = move_options
         self.field_id = field_id
         self.emoji = emoji
-        self.health = 1
+        self.health = 100
         self.health_diff = 0
         self.last_hit = ""
+        
+        self.moves_tracker = {
+            "Light" : 0,
+            "Heavy" : 0,
+            "Block" : 0
+        }
+
+        self.hit_tracker = self.moves_tracker.copy()
 
     def take_damage(self, damage : int):
         self.health = max(0,  self.health - damage)

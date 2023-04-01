@@ -95,10 +95,10 @@ class DuelManager:
         p2_move = self.player2_obj.get_move()
 
         if p1_move.name.lower() != "na":
-            await self.bot.user_record.add_move_count(self.player1.id, p1_move.name.lower())
-        
+            self.player1_obj.moves_tracker[p1_move.name] += 1
+
         if p2_move.name.lower() != "na":
-            await self.bot.user_record.add_move_count(self.player2.id, p2_move.name.lower())
+            self.player2_obj.moves_tracker[p2_move.name] += 1
 
         self.player1_obj.reset_health_diff()
         self.player2_obj.reset_health_diff()
@@ -111,10 +111,12 @@ class DuelManager:
         
         #If player 2 wins
         if p1_move.lose_against(p2_move):
+            self.player2_obj.hit_tracker[p2_move.name] += 1
             return p2_move.execute(receiver= self.player1_obj, attacker = self.player2_obj), versus_str
         
         #If player 1 wins
         if p2_move.lose_against(p1_move):
+            self.player1_obj.hit_tracker[p1_move.name] += 1
             return p1_move.execute(receiver = self.player2_obj, attacker = self.player1_obj), versus_str
     
     def make_health_str(self) -> str:
@@ -180,6 +182,14 @@ class DuelManager:
         
         #Only update database if not forfeited
         if not forfeit_user:
+            #Push all buffers into database (TODO: optimized later to only one call)
+            for move in self.player1_obj.moves_tracker.keys():
+                await self.bot.user_record.add_move_count(self.player1.id, move.lower(), self.player1_obj.moves_tracker[move])
+                await self.bot.user_record.add_move_count(self.player2.id, move.lower(), self.player2_obj.moves_tracker[move])
+
+                await self.bot.user_record.add_hit_count(self.player1.id, move.lower(), self.player1_obj.hit_tracker[move])
+                await self.bot.user_record.add_hit_count(self.player2.id, move.lower(), self.player2_obj.hit_tracker[move])
+
             #If there is a winner, update win stats
             if winner_id:
                 await self.bot.user_data.add_win(winner_id, loser_id)
