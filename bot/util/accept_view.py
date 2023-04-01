@@ -5,7 +5,7 @@ class AcceptView(discord.ui.View):
         super().__init__()
         self.value = None
         self.user = user
-        self.timeout = 10
+        self.timeout = 30
     
     async def interaction_check(self, interaction) -> bool:
         return interaction.user == self.user
