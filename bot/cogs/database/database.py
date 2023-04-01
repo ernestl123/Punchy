@@ -1,9 +1,3 @@
-import discord
-from discord.ext import commands
-import asyncio
-import asyncpg
-import json
-
 class Database():
 
     def __init__(self, bot) -> None:
