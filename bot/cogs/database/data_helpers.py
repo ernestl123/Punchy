@@ -21,7 +21,7 @@ class UserData(Database):
     
     #Get all record columns from UserInfo table of a specific user
     async def get_user(self, user_id : int) -> dict:
-        await self.get_wins_total(user_id)
+        await self.get_unique_opp(user_id)
         return dict(await self.db.fetchrow(f"SELECT * FROM UserInfo WHERE id = {user_id}"))
 
     async def add_win(self, user_id : int, opp_id : int) -> None:
@@ -67,7 +67,7 @@ class UserRecord(Database):
         return val
     
     async def get_user(self, user_id : int) -> dict:
-        await self.get_light_count(user_id)
+        await self.get_achievments(user_id)
         return dict(await self.db.fetchrow(f"SELECT * FROM UserRecord WHERE id = {user_id}"))
     
     async def add_forfeit_count(self, user_id : int) ->  None:

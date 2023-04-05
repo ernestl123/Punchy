@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import logging
 
 class Record(commands.Cog):
 
@@ -32,5 +33,18 @@ class Record(commands.Cog):
 
         await interaction.response.send_message(embed = embed)
 
+    @record.error
+    async def on_record_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            return;
+        embed = discord.Embed(
+            title = f"💀❌An error has occured with command `record` used by `{interaction.user}`",
+            description=str(error),
+            color=discord.Colour.brand_red()
+        )
+
+        await interaction.channel.send(embed = embed)
+        logging.exception("ERROR ERROR ERROR DOES NOT COMPUTEඞඞඞ")
+        
 async def setup(bot) -> None:
     await bot.add_cog(Record(bot))

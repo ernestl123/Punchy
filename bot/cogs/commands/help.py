@@ -30,5 +30,14 @@ class Help(commands.Cog):
         await interaction.response.send_message(file = IMAGE, embed = EMBED)
         return
     
+    @app_commands.command(name = "info", description = "Some info about the bot itself")
+    async def info(self, interaction : discord.Interaction):
+        embed = discord.Embed(description= f'''
+            Ping: `{self.bot.latency}`
+            Server count: `{len(self.bot.guilds)}`
+        ''')
+        embed.set_author(name = "Punchy", icon_url = self.bot.user.avatar)
+        await interaction.response.send_message(embed = embed)
+    
 async def setup(bot) -> None:
     await bot.add_cog(Help(bot))
