@@ -118,6 +118,8 @@ class DuelManager:
         if p2_move.lose_against(p1_move):
             self.player1_obj.hit_tracker[p1_move.name] += 1
             return p1_move.execute(receiver = self.player2_obj, attacker = self.player1_obj), versus_str
+        
+        return ("Nothing happened...", NOTHING_URL), versus_str
     
     def make_health_str(self) -> str:
         player1_str = f"{self.player1_obj.name}\n{self.make_health_bar(self.player1_obj)}"

@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 import json
 import asyncpg
+import topgg
 
 from bot.cogs.database.data_helpers import UserData, UserRecord
 
@@ -13,22 +14,27 @@ class Punchy(commands.AutoShardedBot):
     DB_NAME = "punchy"
     def __init__(self, command_prefix = commands.when_mentioned, **kwargs) -> None:
         super().__init__(command_prefix=command_prefix, activity=discord.Game(name="/help", type=1), **kwargs)
-
-    def get_cred(self) -> dict:
-        #Login credentials stored in secret file
         with open("secret.json", "r") as f:
             secret = json.load(f)
-        
-        return {
+        self.cred = {
             "user": secret["pg_user"], 
             "password": secret["pg_pw"], 
             "database":self.DB_NAME, 
             "host": "localhost"
         }
+        self.topgg_token = secret["topgg"]
+        self.webhookAuth = secret["webhookAuth"]
+
+    async def setup_hook(self) -> None:
+        self.topggpy = topgg.DBLClient(self, self.topgg_token)
+        self.topgg_webhook = topgg.WebhookManager(self).dbl_webhook("/dblwebhookPunchy", self.webhookAuth)
+        await self.topgg_webhook.run(5001)
+        logging.info("Established connection to DBL Webhook!")
+        return
 
     async def start(self, token : str):
         async with self, \
-            asyncpg.create_pool(min_size = 2, max_size = 2, **self.get_cred()) as db_pool:
+            asyncpg.create_pool(min_size = 2, max_size = 2, **self.cred) as db_pool:
             self.db = db_pool
 
             self.user_data = UserData(self)
@@ -52,3 +58,5 @@ class Punchy(commands.AutoShardedBot):
     async def on_ready(self):
         logging.info("Punchy is up and ready to roll!")
         print("Punchy is up and ready to roll!")
+    
+    
