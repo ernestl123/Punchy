@@ -7,7 +7,8 @@ import topgg
 class DBL(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.update_stats.start()
+        if not self.bot.testing:
+            self.update_stats.start()
 
     @tasks.loop(minutes=30)
     async def update_stats(self):

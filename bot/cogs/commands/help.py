@@ -35,6 +35,7 @@ class Help(commands.Cog):
         embed = discord.Embed(description= f'''
             Ping: `{self.bot.latency}`
             Server count: `{len(self.bot.guilds)}`
+            [Invite me to your server!](https://discord.com/oauth2/authorize?client_id=1055393871951040562&scope=bot&permissions=52224)
         ''')
         embed.set_author(name = "Punchy", icon_url = self.bot.user.avatar)
         await interaction.response.send_message(embed = embed)

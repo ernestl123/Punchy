@@ -4,7 +4,7 @@ import asyncio
 import json
 
 from bot.punchy import Punchy
-testing = False
+testing = True
 
 async def run_punchy() -> None:
     bot = Punchy(intents = discord.Intents.default())

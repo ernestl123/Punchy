@@ -10,6 +10,7 @@ import topgg
 
 from bot.cogs.database.data_helpers import UserData, UserRecord
 
+
 class Punchy(commands.AutoShardedBot):
     DB_NAME = "punchy"
     def __init__(self, command_prefix = commands.when_mentioned, **kwargs) -> None:
@@ -24,6 +25,7 @@ class Punchy(commands.AutoShardedBot):
         }
         self.topgg_token = secret["topgg"]
         self.webhookAuth = secret["webhookAuth"]
+        self.testing = True
 
     async def setup_hook(self) -> None:
         self.topggpy = topgg.DBLClient(self, self.topgg_token)
