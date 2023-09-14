@@ -19,6 +19,19 @@ class Database():
 
         return values[data_name.lower()]
     
+    async def get_data_pair(self, table_name : str, data1_name : str, data2_name : str, id : int):
+        #Attempt to retrive data from record. val is a Record object(dict/tuple hybrid)
+        values = await self.db.fetchrow(f"SELECT {id}, {data1_name}, {data2_name} FROM {table_name} WHERE id = {id}")
+
+        #If id does not exist in record
+        if not values:
+            await self.db.execute(f'''
+                INSERT INTO {table_name}(id) VALUES ($1)
+            ''', id)
+            return await self.db.fetchval(f"SELECT {data1_name}, {data2_name} FROM {table_name} WHERE id = {id}")
+
+        return values[data1_name.lower()], values[data2_name.lower()]
+    
     #Set helper function
     async def update_data(self, table_name : str, data_name : str, id : int, new_data) -> None:
         #Ensure that record exists in database

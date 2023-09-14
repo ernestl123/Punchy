@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+
 IMAGE = discord.File("bot/cogs/images/move-diagram.png", filename = "move-diagram.png")
 EMBED = discord.Embed(
     title = "📚How to play duel!",
@@ -36,6 +37,7 @@ class Help(commands.Cog):
             Ping: `{self.bot.latency}`
             Server count: `{len(self.bot.guilds)}`
             [Invite me to your server!](https://discord.com/oauth2/authorize?client_id=1055393871951040562&scope=bot&permissions=52224)
+            [Support Server](https://discord.gg/D2NqDU26wq)
         ''')
         embed.set_author(name = "Punchy", icon_url = self.bot.user.avatar)
         await interaction.response.send_message(embed = embed)
