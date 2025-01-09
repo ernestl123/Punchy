@@ -4,7 +4,7 @@ import traceback
 
 import logging
 
-MAX_CHOICES = 3
+MAX_CHOICES = 1
 
 class ActionView(View):
     def __init__(self, 

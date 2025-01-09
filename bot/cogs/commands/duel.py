@@ -42,25 +42,25 @@ class Duel(commands.Cog):
         #Start duel
         self.duel_users.add(player1)
         self.duel_users.add(player2)
-        accept_view = AcceptView(user)
-        embed = discord.Embed(description=f"**{player2.nick if player2.nick else player2.name}**, you have been\nchallenged to a noble duel⚔️!\nDo you accept?", colour = discord.Colour.blurple())
-        embed.set_author(name = f"Challenged by: {player1.nick if player1.nick else player1.name}", icon_url = player1.avatar)
-        embed.set_thumbnail(url = player2.avatar)
 
-        embed.set_image(url = "https://i.imgflip.com/2sqzch.png?a466656")
-        await interaction.response.send_message(embed = embed, view=accept_view)
-
-        await accept_view.wait()
-
-        if not accept_view.value:
-            await interaction.edit_original_response(content = f"Ey yo {player2.mention} chickened out of a duel lmao.🐔🐔🐔", embed = None, view = None)
-            self.duel_users.remove(player1)
-            self.duel_users.remove(player2)
-            return
-
-        manager = DuelManager(player1, player2, interaction, self.bot)
-        
         try:
+            accept_view = AcceptView(user)
+            embed = discord.Embed(description=f"**{player2.nick if player2.nick else player2.name}**, you have been\nchallenged to a noble duel⚔️!\nDo you accept?", colour = discord.Colour.blurple())
+            embed.set_author(name = f"Challenged by: {player1.nick if player1.nick else player1.name}", icon_url = player1.avatar)
+            embed.set_thumbnail(url = player2.avatar)
+
+            embed.set_image(url = "https://i.imgflip.com/2sqzch.png?a466656")
+            await interaction.response.send_message(embed = embed, view=accept_view)
+
+            await accept_view.wait()
+
+            if not accept_view.value:
+                await interaction.edit_original_response(content = f"Ey yo {player2.mention} chickened out of a duel lmao.🐔🐔🐔", embed = None, view = None)
+                self.duel_users.remove(player1)
+                self.duel_users.remove(player2)
+                return
+
+            manager = DuelManager(player1, player2, interaction, self.bot)
             await manager.run_game()  
         except Exception as e:
             raise Exception(e)

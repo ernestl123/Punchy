@@ -11,7 +11,7 @@ FORFEIT_URL = "https://media.tenor.com/U0D6jtPHPeEAAAAC/paz-white-flag.gif"
 IDLE_URL = "https://media.tenor.com/6vEudwCrEAwAAAAd/idle-animation-fighting-games.gif"
 MAX_AFK = 2
 MAX_ROUNDS = 20
-
+MAX_MOVE_COUNT = 1
 class DuelManager:
     #Runs the duel match until either side loses(gets to 0 hp)
     def __init__(self, player1 : discord.User, player2: discord.User, interaction, bot) -> None:
@@ -65,8 +65,8 @@ class DuelManager:
             #Output results by replacing the choices_embed with the new results_embed
             results_embed = discord.Embed(title = "Results:", description=self.make_health_str(), color=discord.Colour.fuchsia())
 
-            #Loop through all three moves of both users, compare and show winner of each move
-            for x in range(3):
+            #Loop through all moves of both users, compare and show winner of each move
+            for x in range(MAX_MOVE_COUNT):
                 (embed_field_value, gif_url), versus_str = await self.do_compare()
 
                 results_embed.description = self.make_health_str()

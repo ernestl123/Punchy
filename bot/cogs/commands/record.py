@@ -36,7 +36,7 @@ class Record(commands.Cog):
     @record.error
     async def on_record_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.CommandOnCooldown):
-            return;
+            return
         embed = discord.Embed(
             title = f"💀❌An error has occured with command `record` used by `{interaction.user}`",
             description=str(error),
