@@ -32,8 +32,8 @@ class DuelManager:
         #Display embed for when players are choosing moves
         self.choices_embed = discord.Embed(description=self.make_health_str(), color=discord.Colour.red())
         self.choices_embed.set_footer(text = "Pick your combos!")
-        self.choices_embed.add_field(name = player1_name, value = "___")
-        self.choices_embed.add_field(name = player2_name, value = "___")
+        self.choices_embed.add_field(name = player1_name, value = "_" * MAX_MOVE_COUNT)
+        self.choices_embed.add_field(name = player2_name, value = "_" * MAX_MOVE_COUNT)
         self.choices_embed.set_author(name=f"{player1_name} 🆚 {player2_name}")
         self.choices_embed.set_image(url = IDLE_URL)
         
@@ -85,7 +85,7 @@ class DuelManager:
             #Clears slected moves from last round
             for player_obj in self.player_obj_dict.values():
                 player_obj.new_round()
-                self.choices_embed.add_field(name = player_obj.name, value = "___")
+                self.choices_embed.add_field(name = player_obj.name, value = "_" * MAX_MOVE_COUNT)
 
             self.choices_embed.description = self.make_health_str()
             round_count += 1

@@ -30,9 +30,10 @@ class DoNothing(Move):
 class LightAttack(Move):
     def __init__(self) -> None:
         super().__init__("Light", LIGHTID, [BLOCKID])
+        self.min_dmg, self.max_dmg = 6, 12
     
     def execute(self, receiver = None, attacker = None):
-        damage = random.randint(6, 12)
+        damage = random.randint(self.min_dmg, self.max_dmg)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(LIGHT_MESSAGES.items()))
         super().execute(receiver, attacker)
@@ -44,9 +45,10 @@ class LightAttack(Move):
 class HeavyAttack(Move):
     def __init__(self) -> None:
         super().__init__("Heavy", HEAVYID, [LIGHTID])
-    
+        self.min_dmg, self.max_dmg = 13, 18
+        
     def execute(self, receiver = None, attacker = None):
-        damage = random.randint(13, 18)
+        damage = random.randint(self.min_dmg, self.max_dmg)
         receiver.take_damage(damage)
         message, gif_url = random.choice(list(HEAVY_MESSAGES.items()))
         super().execute(receiver, attacker)

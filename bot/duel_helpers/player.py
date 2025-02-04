@@ -27,7 +27,7 @@ class Player:
     
     def heal(self, heal_amount : int):
         self.health = max(100,  self.health + heal_amount)
-        self.health_diff += heal_amount
+        self.health_diff += max(100,  self.health + heal_amount)
 
     def add_light(self):
         self.moves.append(self.move_options[0])
